@@ -2,7 +2,7 @@
 
 # Goals
 
-### 1 Designed microservice which can be deploy for each client independently.
+### 1. Designed microservice which can be deploy for each client independently.
 
 Designed the distributed exchange. We can deploy multiple instance of `server.js` by defining CLIENT_ID in env variable based on number of clients. Each instance will maintain own order book.
 
@@ -49,17 +49,17 @@ Note: i have designed the system in such a way then single instance can be used 
     }
 ```
 
-### 2 order distribution for multiple instances
+### 2. order distribution for multiple instances
 Once client connect to dedicate instance and send the buy/sell order though rpc channel, then service maintain record of order book and distribute the message to all other microservices via pub/sub model. (single publisher multiple consumer).
 
 This part is currently pending in assignment due to time constrain and can be achieve via different solutions.
 
-### 3 communication between different microservice and protection form  race condition after matching the order
+### 3. communication between different microservice and protection form  race condition after matching the order
 After distribution of order, when any microservice match the order then we can need to add lock in both side of matching orders so it can not matched twice in any other order till trade settle.
 
 We need to maintain boolean for both side of orders and need to active once order matched & need to deactivate once order executed. 
 
-### 4 any remainer is added to the orderbook, too.
+### 4. any remainer is added to the orderbook, too.
 The whole logic for order book is in `orderboook.js` file. it has also have logic for full fill partial/remainer order. 
 
 ```typescript
