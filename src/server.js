@@ -68,6 +68,7 @@ service.on('request', async (rid, key, payload, handler) => {
 
 })
 
+// subscriber implementation for orders
 setTimeout(() => {
     orderSubscriber.init()
     orderSubscriber.sub('distribute_order', { timeout: 10000 })
@@ -78,7 +79,7 @@ setTimeout(() => {
     orderSubscriber.on('disconnected', () => {
         console.log('disconnected')
     })
-    orderSubscriber.on('message', (msg) => {
+    orderSubscriber.on('message', async (msg) => {
         console.log(msg, instanceClientId);
         try {
             let payload = JSON.parse(msg);
