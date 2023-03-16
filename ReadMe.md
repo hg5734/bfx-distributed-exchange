@@ -52,7 +52,44 @@ Note: i have designed the system in such a way then single instance can be used 
 ### 2. order distribution for multiple instances
 Once client connect to dedicate instance and send the buy/sell order though rpc channel, then service maintain record of order book and distribute the message to all other microservices via pub/sub model. (single publisher multiple consumer).
 
-This part is currently pending in assignment due to time constrain and can be achieve via different solutions.
+We have created two file `pub.js` & `sub.js`.
+```typescript
+// When client dedicated instance send message
+ orderPublisher.pub(JSON.stringify(payload))
+
+// subscriber code
+    orderSubscriber.init()
+    orderSubscriber.sub('distribute_order', { timeout: 10000 })
+
+    orderSubscriber.on('connected', () => {
+        console.log('connected')
+    })
+    orderSubscriber.on('disconnected', () => {
+        console.log('disconnected')
+    })
+    orderSubscriber.on('message', (msg) => {
+        console.log(msg, instanceClientId);
+        try {
+            let payload = JSON.parse(msg);
+            let { clientId } = payload;
+            if (clientId != instanceClientId) {
+                let result = await MatchOrderBook.matchOrderEngine(instanceClientId, payload);
+                if (result) {
+                    console.log('order executed', Object.fromEntries(MatchOrderBook.getClientOrderBook(+instanceClientId)?.orders || {}));
+                    // TODO: we will publish this order execution to client to notify frontend/backend etc
+                } else {
+                   console.log('no order executed');
+                }
+
+            } else {
+                console.log('ignored message due to same client');
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    })
+
+```
 
 ### 3. communication between different microservice and protection form  race condition after matching the order
 After distribution of order, when any microservice match the order then we can need to add lock in both side of matching orders so it can not matched twice in any other order till trade settle.
