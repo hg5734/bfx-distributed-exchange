@@ -96,7 +96,7 @@ After distribution of order, when any microservice match the order then we can n
 
 We need to maintain boolean for both side of orders and need to active once order matched & need to deactivate once order executed. 
 
-### 4. any remainer is added to the orderbook, too.
+### 4. order book logic & any remainer is added to the orderbook, too.
 The whole logic for order book is in `orderboook.js` file. it has also have logic for full fill partial/remainer order. 
 
 ```typescript
